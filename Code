@@ -1,0 +1,143 @@
+# 1.Input Layer--CN/DenseLayer/Convoluted Layer
+#     i. Relu Layer
+#     ii.Pooling Layer  
+#       iii.Upsampling 
+     
+#         i.batchNormalization
+#         ii.Droupout Layer
+#         
+    
+# 2.HiddenLayer --NN
+# 3.Output Layer--FCNN  
+
+
+
+1.Tensorflow
+2.Pytorch
+3.MaxNet
+
+1.Numpy
+2.Pandas
+3.Pillow
+4.OpenCV
+5. Scikit Learn
+
+i.plotly
+ii.matlplotlib
+iii.Seaborn
+iv.D3.js
+v.NLTK
+
+Importing Library
+
+# This section for model
+import tensorflow as tf
+#This section for algebric analysis
+import numpy as np
+# This section for visualisation
+import matplotlib.pyplot as plt
+import warnings
+warnings.filterwarnings('ignore')
+%matplotlib inline
+
+
+help(warnings.filterwarnings)
+
+
+# value = dict({"product_price1":10,"product_price": 100})
+
+
+# 1.Random: import random as rnd
+# 2.Numpy: import numpy.random as npr
+# 3.Tensorflow: import tensorflow.random 
+
+
+class NeuralNetwork:
+    def __init__(self,layers):
+        self.layers=layers
+        self.L=len(layers)
+        
+        self.number_feature=layers[0]
+        self.number_class= layers[-1]
+        
+        self.w ={}
+        self.b ={}
+        
+        self.dw = {}
+        self.db = {}
+        
+        self.setup()
+    
+    def setup(self):
+        for i in range(1,self.L):
+            self.w[i] = tf.Variable(tf.random.normal(shape= (self.layers[i],self.layers[i-1])))
+            self.b[i] = tf.Variable(tf.random.narmal(shape= (self.layers[i],1)))
+        
+        
+# 1.dtype="float32"
+# 2.dtype=np.float32
+# 3.dtype=tf.float32
+# 4.dtype=torch.float32
+
+# Forward propagation
+class NeuralNetwork(NeuralNetwork):
+    def forwardPass (self,A):
+        A = tf.convert_to_tensor(A, dtype=float32)
+        for i in range(1,self.L):
+            Z = tf.matmul(A, tf.transpose(self.w[i])) + tf.transpose(self.b[i])
+            if i!= self.L-1:
+                A = tf.nn.relu(Z)
+            else:
+                A=Z
+        return A       
+        
+        
+   # We will use this section for computing loss and Upgrading the previous parameters
+class NeuralNetwork(NeuralNetwork):
+    def compute_loss(self, A,Y):
+        return tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(Y,A))
+    
+    def upgrade_parameters(self, lr):
+        for j in range(1,self.L):
+            self.w[j].assing_sub(lr*self.dw[j])
+            self.b[j].assing_sub(lr*self.db[j])
+            
+# 0 index-->cats
+# 1 index-->dogs
+np.argmax([0.12,0.09])         
+            
+        
+ class NeuralNetwork(NeuralNetwork):
+    def predict(self, x):
+        A = self.forwardPass(x)
+        return tf.argmax(tf.nn.softmax(A), axis = 1)
+    def info(self):
+        num_params = 0
+        for i in range(1,self.L):
+            num_params += self.w[i].shape[0]*self.w[i].shape[1]
+            num_params += self.b[i].shape[0]
+            
+        print("Number of Feature: {}".format(self.number_feature))
+        print("Total Number of Class is: {}". format(self.number_class))
+        
+        print("Hidden Layer information is:")
+        for j in range(1,self.L-1):
+            print("Layer: {}, Units {}".format(iself.layers[j]))
+            
+        print ("Total Number of parameters : {}". format(num_params)) 
+        
+        
+        
+        
+ # history = model.fit
+ 
+ 
+ # Training Start
+class NeuralNetwork(NeuralNetwork):
+    def train(self,x_train,y_train,x_test,y_test, epochs, step_per_epochs, batch_size, lr):
+        history = {"val_loss":[],
+                  'train_loss':[],
+                  'val_acc':[]}
+        
+        
+        
