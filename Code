@@ -105,6 +105,11 @@ class NeuralNetwork(NeuralNetwork):
 # 0 index-->cats
 # 1 index-->dogs
 np.argmax([0.12,0.09])         
+
+
+
+
+
             
         
  class NeuralNetwork(NeuralNetwork):
@@ -138,6 +143,90 @@ class NeuralNetwork(NeuralNetwork):
         history = {"val_loss":[],
                   'train_loss':[],
                   'val_acc':[]}
+                  
+                  
+            for e in range(0, epochs):
+            training_loss_epochs = 0.0
+            print("Epochs {}". format(e),end = " | ")
+            for i in range(step_per_epochs):
+                x_batch = x_train[i*batch_size : (i+1)*batch_size]
+                y_batch = y_train[i*batch_size : (i+1)*batch_size]
+                batch_loss = self.training_on_batch(x_batch, y_batch, lr)
+                epochs_loss_train += batch_loss
+                
+        
+                if i %int(step_per_epochs/10) ==0:
+                    print(end = " . ")
+                    
+            
+            
+            history['train_loss'].append(epochs_loss_train/step_per_epochs)   
+
+
+            valA = self.forwardPass(x_test)   
+            history['val_loss'].append(self.compute_loss(y_test, valA).numpy())
+
+
+            valuePr = self.predict(x_test)
+            history['val_acc'].append(np.mean(np.argmax(y_test, axis = 1)== valuePr.numpy()))
+            print("value Accuracy:", history['val_acc'][-1])
+
+    # Here We will get training information
+    
+        return history
+            
+            
+            
+            def loadDatasets():
+    (x_train, y_train),(x_test,y_test)= tf.keras.datasets.mnist.load_data()
+    x_train = np.reshape(x_train, (x_train.shape[0],784))//255.0
+    y_train = tf.keras.utils.to_categorical(y_train)
+    x_test = np.reshape(x_test,(x_test.shape[0],784))//255.0
+    y_test = tf.keras.utils.to_categorical(y_test)
+    
+    print("X Train Datasets Shape: {}". format(x_train.shape))
+    print("Y test Data {}".format(y_test))
+    print ("Len of Y test Datasets:{}".format(len(y_test[0])))
+   # print("Unique Value is :{}".format(np.unique(y_test[0]))) 
+    print("Unique Value is :{}".format(np.argmax(y_test[7])))
+    return (x_train, y_train), (x_test, y_test)
+
+
+def plot_random_sample(x,y,p= None):
+    indicies = np.random.choice(range(0,x.shape[0]),10)
+    y=np.argmax(y, axis=1)
+    
+    
+    if p is None:
+        p = y
+        
+    plt.figure(figsize=(10,4)) 
+    for i, index in enumerate(indicies):
+        plt.subplot(2,5, i+1)
+        plt.imshow(x[index].reshape((28,28)), cmap = 'binary')
+        plt.xticks([])
+        plt.yticks([])
+        plt.gray()
+        
+        
+        if y[index]== p[index]:
+            col = 'g'
+        else:
+            col = 'r'
+            plt.xlabel(str(p[index]), color = col)
+            
+            
+    return plt       
+    
+    
+    
+    (x_train, y_train),(x_test,y_test)=loadDatasets()
+    
+    
+    
+    plot_random_sample(x_train,y_train).show()
+            
+            
         
         
         
