@@ -225,8 +225,48 @@ def plot_random_sample(x,y,p= None):
     
     
     plot_random_sample(x_train,y_train).show()
-            
-            
-        
-        
-        
+    
+    network = NeuralNetwork([784,256,256,10])
+    
+     network.info()
+     batch_size =128
+     epochs = 20
+     step_per_epochs = int(x_train.shape[0]/batch_size)
+     
+     
+     X_train.shape[0]//128
+     learning_rate = 3e-6
+     
+     history = network.train(x_train,y_train,x_test,y_test, epochs, step_per_epochs, batch_size, learning_rate)
+     
+     
+     def plot_results(history):
+    plt.figure(figsize=(12,4))
+    epochs = len(history['val_loss'])
+    plt.subplot(1,2,1)
+    plt.plot(range(epochs), history['val_loss'], label='Val Loss')
+    plt.plot(range(epochs), history['train_loss'], label='Train Loss')
+    plt.xticks(list(range(epochs)))
+    plt.xlabel('Epochs')
+    plt.ylabel('Loss')
+    plt.legend() 
+    
+    
+    plt.subplot(1,2,2)
+    plt.plot(range(epochs), history['val_acc'], label = 'Val Acc')
+    plt.xticks(list(range(epochs)))
+    plt.xlabel('Epochs')
+    plt.ylabel('Accuracy')
+    plt.legend()
+    return plt
+    
+  plot_results(history).show()
+  
+  pred = network.predict(x_test)
+  
+  
+  plot_random_sample(x_test,y_test,pred.numpy()).show()
+  
+  
+  
+  
