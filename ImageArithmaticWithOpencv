@@ -1,0 +1,35 @@
+import cv2
+import matplotlib.pyplot as plt
+import numpy as np
+import warnings
+warnings.filterwarnings('ignore')
+%matplotlib inline
+
+!pip install opencv-python
+
+def plt_imshow(title, image):
+    image = cv2.cvtColor(image, cv2.COLOR_BAYER_BG2BGR)
+    plt.imshow(image)
+    plt.title("Dog Image")
+    plt.grid(True)
+    plt.show()
+    args = {"image": "DogsImage.jepg"}
+    img=cv2
+    
+    img=cv2.imread("DogsImage.jpeg")
+img.shape
+
+imageAddCustomValue=cv2.add(np.uint8([200]), np.uint8([100]))
+imageSubractCustomValue=cv2.subtract(np.uint8([50]), np.uint8([100]))
+print("Image Minimum Value of 255{}".format(imageAddCustomValue))
+print("Image Minimum Value of 255{}".format(imageSubractCustomValue))
+
+img = cv2.imread(args)
+img.shape
+m= np.ones(img.shape, dtype=np.uint8)*100
+m
+
+add = cv2.add(img, m)
+plt_imshow("Added value", add)
+sub = cv2.subtract(img, m)
+plt_imshow("Subtructed Value", sub)
