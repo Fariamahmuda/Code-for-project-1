@@ -1,0 +1,38 @@
+import os
+import cv2
+import matplotlib.pyplot as plt 
+
+path="Desktop\Image folder for opencv"
+images=os.listdir(path)
+images
+
+type(images)
+len(images)
+
+for img in images:
+    im_arr=cv2.imread(os.path.join(path,img)) # showing array value
+    print(im_arr)
+    
+    for img in images:
+    im_arr=cv2.imread(os.path.join(path,img)) 
+    plt.figure()
+    plt.imshow(im_arr)
+    
+    image_data=[]
+for img in images:
+    pictures=cv2.imread(os.path.join(path,img))
+    image_data.append(pictures)
+    
+    len(image_data)
+    len(image_data[1])
+    image_data[1]
+    
+    for i in range (len(image_data)):
+    plt.subplot(5,2,i+1)
+    plt.imshow(image_data[i])
+    
+    plt.figure(figsize=(20,20))
+for i in range (len(image_data)):
+    plt.subplot(5,2,i+1)
+    plt.imshow(image_data[i])
+    
