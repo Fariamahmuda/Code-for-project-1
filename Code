@@ -82,7 +82,7 @@ class NeuralNetwork:
 # Forward propagation
 class NeuralNetwork(NeuralNetwork):
     def forwardPass (self,A):
-        A = tf.convert_to_tensor(A, dtype=float32)
+        A = tf.convert_to_tensor(A, dtype=tf.float32)
         for i in range(1,self.L):
             Z = tf.matmul(A, tf.transpose(self.w[i])) + tf.transpose(self.b[i])
             if i!= self.L-1:
@@ -146,7 +146,7 @@ class NeuralNetwork(NeuralNetwork):
                   
                   
             for e in range(0, epochs):
-            training_loss_epochs = 0.0
+            epochs_loss_train = 0.0
             print("Epochs {}". format(e),end = " | ")
             for i in range(step_per_epochs):
                 x_batch = x_train[i*batch_size : (i+1)*batch_size]
