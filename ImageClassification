@@ -1,0 +1,234 @@
+# Image Related problem Statement:
+#     i.Image Classification
+#     ii. Detection
+#     iii. Recognition
+#     iv. Image localization
+# Feature:
+#     1.Feature Extruction
+#     2.Feature Engineeing
+#     3.Feature Importance
+    
+# Error
+# Distance
+# Min-max
+
+# mean
+# median
+# mode
+# std--> varience
+
+# MLE
+# matrix similarities
+
+# tensorflow
+# pytorch
+# mxnet
+# scikit-learn
+# Transformer
+# import tensorflow as tf
+# import os
+# import matplotlib. pyplot as plt
+# import cv2
+# import numpy as np
+# from tensorflow.keras.layers import Dense,MaxPooling2D,Flatten, Dropout,Conv2D,BatchNormalization
+# from tensorflow.keras.models import Sequential
+# import imghdr
+# import warnings
+# warnings.filterwarnings('ignore')
+
+
+import tensorflow as tf
+import os
+import cv2
+import matplotlib.pyplot as plt
+from tensorflow.keras.layers import Dense, MaxPooling2D, Flatten, Dropout, Conv2D, BatchNormalization
+from tensorflow.keras.models import Sequential
+import imghdr
+import warnings
+warnings.filterwarnings('ignore')
+
+image_extention = ['jpeg','jpg','png','bmp']
+os.listdir('data/')
+
+datasets_dir = 'data'
+os.listdir(os.path.join(datasets_dir,'happy'))
+cv2.imread("../../data/")# jumping 2 folder
+
+# datasets_dir = "data"  # can be accessed to individually data reading
+
+for imageClassnames in os.listdir(datasets_dir):
+    for individualImage in os.listdir(os.path.join(datasets_dir,imageClassnames)): # (join) is used to read every data and to go root folder
+        imagePath = os.path.join(datasets_dir, imageClassnames,individualImage)
+        try:
+            image = cv2.imread(imagePath)
+            if imageTag not in image_extension:
+                print("Image Extension is not in right {}". format(imagePath))
+                os.remove(imagePath)
+        except Exception as e:
+            print("The main issue is {} here. Plsease solve this issue". format(imagePath))
+        
+datasets= tf.keras.utils.image_dataset_from_directory(datasets_dir)
+
+datasets_iterate = datasets.as_numpy_iterateor()
+
+datasets_iterate.next
+
+datasets_batch = datasets_iterate.next()
+
+ datasets_batch[0][0]
+ 
+ fig, ax =plt.subplots(ncols=4, figsize = (10,10))
+for idx, image in enumerate(datasets_batch[0][10:14]):
+    ax[idx].imshow(image.astype('int'))
+    ax[idx].title.set_text(datasets_batch[1][idx])
+    
+  def randomImageShow():
+    datasets_batch = datasets_iterate.next()
+    fig, ax = plt.subplots(ncols=4, figsize = (10,10))
+    for idx, image in enumerate(datasets_batch[0][10:14]):
+        ax[idx].imshow(image.astype('int'))
+        ax[idx].title.set_text(datasets_batch[1][idx])
+        
+  randomImageShow()
+  
+  datasetsScalling = datasets.map(lambda x,y: (x/255,y))
+  datasetsScalling
+  
+ datasetsScalling.as_numpy_iterator().next()
+ 
+trainingCategory = int(len(datasetsScalling)*0.7)
+testingCategory = int(len(datasetsScalling)*0.2)
+validationCategory = int(len(datasetsScalling)*0.1)
+
+
+train =datasetsScalling.take(trainingCategory)
+valid = datasetsScalling.skip(trainingCategory).take(validationCategory)
+test = datasetsScalling.skip(trainingCategory+validationCategory).take(testingCategory)
+
+model = Sequential()
+
+# input layer
+model.add(Conv2D(16, kernel_size = (3,3), strides = 1, activation= 'relu',input_shape = (256,256, 3)))
+model.add(MaxPooling2D())
+#model.add(MaxPooling2D(pool_size= (2,2)))
+# model.add(BatchNormalization)
+# model.add(Dropout(0.3))
+
+# 1st Hidden layer
+model.add(Conv2D(32, kernel_size =(3,3), strides = 1, activation = 'relu'))
+model.add(MaxPooling2D())
+
+#2nd Hidden layer
+model.add(Conv2D(64, kernel_size=(3,3), strides = 1, activation = 'relu'))
+model.add(MaxPooling2D())
+
+model.add(Flatten()) # Bridge layer
+
+# Connected Layer or Output Layer
+model.add(Dense(256,activation = 'relu'))
+model.add(Dense(1, activation = 'sigmoid')) # convert into discrete data
+
+model.summary()
+
+model.compile(optimizer = 'adam',
+             loss = 'BinaryCrossentropy',
+             metrics =['accuracy'])
+             
+             
+#os.makedirs("../working/logs")
+#log_dir = ('../working/logs')
+
+tensboard = tf.keras.callbacks.TensorBoard(log_dir=log_dir)
+
+history = model.fit(train,
+                   epochs=20,
+                   validation_data= valid,
+                   callbacks=[tensboard])
+history.history
+history.history.keys()
+
+
+fig=plt.figure()
+plt.plot(history.history['loss'], color = 'red', label = ['loss'])
+plt.plot(history.history['val_loss'], color= 'blue', label = ['valueloss'])
+plt.suptitle("Loss Data Visualisation")
+plt.legend(loc = "upper left")
+plt.show()
+
+
+ fig=plt.figure()
+plt.plot(history.history['accuracy'], color = 'red', label = ['accuracy'])
+plt.plot(history.history['val_accuracy'], color= 'blue', label = ['val_accuracy'])
+plt.suptitle("Accuracy Data Visualisation")
+plt.legend(loc = "upper left")
+plt.show()
+
+from tensorflow.keras.metrics import Precision, Recall, BinaryAccuracy
+
+Precision_data = Precision()
+RecallData = Recall()
+BinaryAccuracy = BinaryAccuracy()
+
+for batch in test.as_numpy_iterator():
+    x,y = batch
+    yPredict = model.predict(x)
+    Precision_data(y,yPredict)
+    RecallData(y, yPredict)
+    BinaryAccuracy(y, yPredict)
+    
+print(Precision_data.result(),"\n",RecallData.result(),"\n",BinaryAccuracy)
+
+testImageData = cv2.imread("Downloads/Class08data/Happy.jpg")
+plt.imshow(testImageData)
+plt.show() 
+
+testImageData.shape
+resizeImageData = tf.image.resize(testImagedata,(256,256))
+
+plt.imshow(resizeImageData.numpy().astype('int'))
+plt.show()
+
+testImageDataPredict = model.predict(np.expand_dims(resizeImageData/255,0))
+testImageDataPredict
+
+if testImageDataPredict > 0.5:
+    print("Happy Image")
+else:
+    print('Sad Image')
+    
+
+
+
+
+
+
+
+
+  
+  
+  
+    
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
